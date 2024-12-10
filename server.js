@@ -19,21 +19,21 @@ app.use(express.static('public'));
 app.post('/api/chat', async (req, res) => {
     try {
         const { message, context = [] } = req.body;
-
+        
         // Function to chunk the response
         async function generateCompleteResponse(message, context) {
             let fullResponse = '';
             let isComplete = false;
             let attempts = 0;
-            const maxAttempts = 10; // Limit the number of chunks to prevent infinite loops
-
+            const maxAttempts = 5; // Limit the number of chunks to prevent infinite loops
+            
             while (!isComplete && attempts < maxAttempts) {
                 const currentPrompt = attempts === 0 ?
                     message :
                     `Continue the following response: "${fullResponse}"`;
 
                 const completion = await openai.chat.completions.create({
-                    model: "gpt-4",
+                    model: "gpt-3.5-turbo",
                     messages: [
                         ...context,
                         { role: "user", content: currentPrompt }
@@ -51,7 +51,7 @@ app.post('/api/chat', async (req, res) => {
                            chunkResponse.trim().endsWith('!') ||
                            chunkResponse.trim().endsWith('?') ||
                            chunkResponse.includes('[DONE]');
-
+                
                 attempts++;
             }
 

@@ -21,6 +21,20 @@
                         <span class="toggle-label">Typing Animation</span>
                     </label>
                 </div>
+                <div class="settings-group">
+                    <button id="clear-history" class="danger-button">
+                        <span class="button-icon">🗑️</span>
+                        Clear Chat History
+                    </button>
+                </div>
+                <div class="settings-group">
+                    <label for="context-file" class="file-upload-label">
+                        <span class="button-icon">📄</span>
+                        Upload Context File
+                    </label>
+                    <input type="file" id="context-file" accept=".txt" class="file-upload-input">
+                    <div id="context-file-name" class="file-name"></div>
+                </div>
             </div>
         </div>
 
@@ -36,6 +50,19 @@
             </div>
         </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="confirmation-modal">
+        <div class="confirmation-content">
+            <h3>Clear Chat History</h3>
+            <p>Are you sure you want to clear all chat history? This action cannot be undone.</p>
+            <div class="confirmation-buttons">
+                <button id="confirm-clear-history" class="confirm-button">Clear History</button>
+                <button id="cancel-clear-history" class="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
