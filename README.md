@@ -140,4 +140,4 @@ For support, please open an issue in the GitHub repository or contact the mainta
 
 ---
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by [3AM Technologies](https://3am-tech.com)
