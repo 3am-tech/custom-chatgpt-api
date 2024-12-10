@@ -25,7 +25,7 @@ app.post('/api/chat', async (req, res) => {
             let fullResponse = '';
             let isComplete = false;
             let attempts = 0;
-            const maxAttempts = 5; // Limit the number of chunks to prevent infinite loops
+            const maxAttempts = 10; // Limit the number of chunks to prevent infinite loops
 
             while (!isComplete && attempts < maxAttempts) {
                 const currentPrompt = attempts === 0 ?
@@ -33,7 +33,7 @@ app.post('/api/chat', async (req, res) => {
                     `Continue the following response: "${fullResponse}"`;
 
                 const completion = await openai.chat.completions.create({
-                    model: "gpt-3.5-turbo",
+                    model: "gpt-4",
                     messages: [
                         ...context,
                         { role: "user", content: currentPrompt }

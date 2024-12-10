@@ -4,6 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatMessages = document.getElementById('chat-messages');
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
+    const typingAnimationToggle = document.getElementById('typing-animation-toggle');
+
+    // Load saved preference from localStorage
+    const savedAnimationPreference = localStorage.getItem('typingAnimation');
+    if (savedAnimationPreference !== null) {
+        typingAnimationToggle.checked = savedAnimationPreference === 'true';
+    }
+
+    // Save preference when changed
+    typingAnimationToggle.addEventListener('change', () => {
+        localStorage.setItem('typingAnimation', typingAnimationToggle.checked);
+    });
 
     function addMessage(content, isUser = false) {
         const messageDiv = document.createElement('div');
@@ -12,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create message content div
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
-        contentDiv.textContent = content;
         messageDiv.appendChild(contentDiv);
 
         // Add copy button for assistant messages
@@ -42,6 +53,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         chatMessages.appendChild(messageDiv);
+        
+        if (!isUser && typingAnimationToggle.checked) {
+            // Animate the text being typed
+            let currentText = '';
+            let currentIndex = 0;
+            const typingSpeed = 10; // Milliseconds per character
+            
+            function typeNextCharacter() {
+                if (currentIndex < content.length) {
+                    currentText += content[currentIndex];
+                    contentDiv.textContent = currentText;
+                    currentIndex++;
+                    
+                    // Vary typing speed slightly for more natural effect
+                    const variance = Math.random() * 10 - 5;
+                    setTimeout(typeNextCharacter, typingSpeed + variance);
+                    
+                    // Scroll to bottom as text is being typed
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                } else {
+                    // Add typing-complete class when done
+                    messageDiv.classList.add('typing-complete');
+                }
+            }
+            
+            typeNextCharacter();
+        } else {
+            contentDiv.textContent = content;
+            if (!isUser) {
+                messageDiv.classList.add('typing-complete');
+            }
+        }
+        
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
