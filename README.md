@@ -2,7 +2,7 @@
 
 A modern, customizable chat application built with Node.js and the OpenAI GPT API. This application provides a clean, intuitive interface for interacting with ChatGPT, featuring real-time typing animations, response copying, and customizable settings.
 
-![Custom ChatGPT Interface](https://your-screenshot-url.png)
+![Custom ChatGPT Interface](https://github.com/user-attachments/assets/31acfb64-0a67-4510-9928-d0dffad4d3a3)
 
 ## Features
 
