@@ -40,9 +40,50 @@ body {
 
 .message {
     margin-bottom: 20px;
-    padding: 10px 15px;
+    padding: 15px 20px;
     border-radius: 10px;
-    max-width: 80%;
+    max-width: 85%;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    position: relative;
+}
+
+.message-content {
+    margin-right: 30px; /* Space for copy button */
+}
+
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.copy-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.message:hover .copy-button {
+    opacity: 1;
+}
+
+.copy-icon {
+    font-style: normal;
+    font-size: 16px;
+}
+
+.copy-button.copied {
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+.assistant-message .copy-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .user-message {
@@ -86,9 +127,17 @@ body {
 }
 
 .typing-indicator {
-    padding: 10px;
+    padding: 12px 20px;
     background-color: #e9ecef;
     border-radius: 10px;
     display: inline-block;
     margin-bottom: 20px;
+    color: #666;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
 }

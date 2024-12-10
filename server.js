@@ -19,23 +19,53 @@ app.use(express.static('public'));
 app.post('/api/chat', async (req, res) => {
     try {
         const { message, context = [] } = req.body;
-        
-        const completion = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [
-                ...context,
-                { role: "user", content: message }
-            ],
-            temperature: 0.7,
-            max_tokens: 1000
-        });
+
+        // Function to chunk the response
+        async function generateCompleteResponse(message, context) {
+            let fullResponse = '';
+            let isComplete = false;
+            let attempts = 0;
+            const maxAttempts = 5; // Limit the number of chunks to prevent infinite loops
+
+            while (!isComplete && attempts < maxAttempts) {
+                const currentPrompt = attempts === 0 ?
+                    message :
+                    `Continue the following response: "${fullResponse}"`;
+
+                const completion = await openai.chat.completions.create({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                        ...context,
+                        { role: "user", content: currentPrompt }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 1000,
+                    stop: ["[DONE]"] // Optional stop sequence
+                });
+
+                const chunkResponse = completion.choices[0].message.content;
+                fullResponse += chunkResponse;
+
+                // Check if response seems complete
+                isComplete = chunkResponse.trim().endsWith('.') ||
+                           chunkResponse.trim().endsWith('!') ||
+                           chunkResponse.trim().endsWith('?') ||
+                           chunkResponse.includes('[DONE]');
+
+                attempts++;
+            }
+
+            return fullResponse;
+        }
+
+        const completeResponse = await generateCompleteResponse(message, context);
 
         res.json({
-            message: completion.choices[0].message.content,
+            message: completeResponse,
             context: [
                 ...context,
                 { role: "user", content: message },
-                { role: "assistant", content: completion.choices[0].message.content }
+                { role: "assistant", content: completeResponse }
             ]
         });
     } catch (error) {

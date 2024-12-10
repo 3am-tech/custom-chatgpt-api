@@ -8,7 +8,39 @@ document.addEventListener('DOMContentLoaded', () => {
     function addMessage(content, isUser = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user-message' : 'assistant-message'}`;
-        messageDiv.textContent = content;
+        
+        // Create message content div
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.textContent = content;
+        messageDiv.appendChild(contentDiv);
+
+        // Add copy button for assistant messages
+        if (!isUser) {
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-button';
+            copyButton.innerHTML = '<i class="copy-icon">📋</i>';
+            copyButton.title = 'Copy to clipboard';
+            
+            copyButton.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(content);
+                    copyButton.innerHTML = '<i class="copy-icon">✓</i>';
+                    copyButton.classList.add('copied');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="copy-icon">📋</i>';
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text:', err);
+                }
+            });
+            
+            messageDiv.appendChild(copyButton);
+        }
+
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -24,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show typing indicator
         const typingDiv = document.createElement('div');
         typingDiv.className = 'typing-indicator';
-        typingDiv.textContent = 'AI is typing...';
+        typingDiv.textContent = 'AI is generating a comprehensive response...';
         chatMessages.appendChild(typingDiv);
 
         try {
@@ -47,7 +79,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.error) {
                 addMessage('Error: ' + data.error);
             } else {
-                addMessage(data.message);
+                // Split the response into paragraphs for better readability
+                const formattedMessage = data.message
+                    .split('\n')
+                    .filter(para => para.trim())
+                    .join('\n\n');
+                addMessage(formattedMessage);
                 chatContext = data.context;
             }
         } catch (error) {
